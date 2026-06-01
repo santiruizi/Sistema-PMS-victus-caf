@@ -18,11 +18,13 @@ public abstract class  Usuario {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private String tipoDeDocumento;
+    @Column(unique = true, nullable = false)
     private Long numeroDeDocumento;
     private String nombreCompleto;
     private LocalDate fechaDeNacimiento;
     private Long telefono;
     private String contrasena;
+    private String correo;
     private Boolean estado;
     @Enumerated(EnumType.STRING)
     private TipoDeCliente tipoDeCliente;

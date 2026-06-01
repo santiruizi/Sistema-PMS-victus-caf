@@ -1,12 +1,10 @@
 package com.victuscaf.modules.client.models;
 
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 import lombok.ToString;
 
 import java.time.LocalDate;
@@ -15,6 +13,7 @@ import java.time.LocalDate;
 @Data
 @EqualsAndHashCode
 @ToString
+@NoArgsConstructor
 public class GastoOperativo {
 
     @Id
@@ -24,4 +23,7 @@ public class GastoOperativo {
     private String descripcion;
     private double valor;
     private TipoGasto tipoGasto;
+    @ManyToOne
+    @JoinColumn(name = "flujo_caja_id")
+    private FlujoDeCaja flujoDeCaja;
 }

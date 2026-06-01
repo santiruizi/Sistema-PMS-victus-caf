@@ -18,13 +18,11 @@ import java.time.LocalDate;
 public class FlujoDeCaja {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idFlujoDeCaja;
     private LocalDate fecha;
     private double totalIngresoParticular;
     private double totalIngresoParticularDiario;
     private double totalIngresoCopagoEps;
     private double totalIngresoPlus;
-    private double totalEgresosMantenimiento;
-    private double totalEgresos;
 }

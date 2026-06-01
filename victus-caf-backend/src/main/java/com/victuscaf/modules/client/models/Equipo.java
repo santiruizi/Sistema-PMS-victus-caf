@@ -24,6 +24,6 @@ public class Equipo {
     private String descripcion;
     private LocalDate fechaAdquision;
     private EstadoEquipo estadoEquipo;
-    private String ProximoMantenimiento;
+    private String proximoMantenimiento;
 
 }

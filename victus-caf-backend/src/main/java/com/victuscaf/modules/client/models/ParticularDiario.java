@@ -16,6 +16,5 @@ import java.time.LocalTime;
 public class ParticularDiario extends Usuario{
     private LocalDate fechaDeIngreso;
     private LocalTime horaIngreso;
-
-    //public void crearCliente(List<Usuario>)
+    private LocalTime horaExpiracion;
 }

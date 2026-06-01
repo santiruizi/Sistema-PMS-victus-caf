@@ -1,8 +1,8 @@
 package com.victuscaf.modules.client.models;
 
-public enum EstadoContrato {
+public enum EstadoContratoEps {
     ACTIVO,
     BLOQUEADO,
     FINALIZADO,
-    CANCELADO_ANTICIPADAMENTE
+    CANCELADO_ANCTICIPADAMENTE
 }
