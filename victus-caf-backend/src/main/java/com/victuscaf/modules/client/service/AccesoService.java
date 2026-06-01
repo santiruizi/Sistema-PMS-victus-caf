@@ -1,7 +1,7 @@
-package com.victuscaf.modules.service;
+package com.victuscaf.modules.client.service;
 
 import com.victuscaf.modules.acceso.dto.RegistroIngresoDTO;
-import com.victuscaf.modules.client.model.*;
+import com.victuscaf.modules.client.models.*;
 import com.victuscaf.modules.client.repository.*;
 import com.victuscaf.modules.client.repository.PagoRepository;
 import com.victuscaf.modules.notificacion.service.NotificacionService;
