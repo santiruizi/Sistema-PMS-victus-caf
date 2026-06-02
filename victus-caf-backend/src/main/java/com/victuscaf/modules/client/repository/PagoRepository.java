@@ -15,6 +15,8 @@ public interface PagoRepository extends JpaRepository<Pago, Long> {
 
     List<Pago> findByFechaPago(LocalDate fecha);
 
+    boolean existsByUsuarioAndFechaPago(Usuario usuario, LocalDate fecha);
+
     List<Pago> findByUsuarioAndTipoPago(Usuario usuario, TipoDePago tipoPago);
 
     List<Pago> findByFechaPagoBetween(LocalDate start, LocalDate end);

@@ -14,7 +14,7 @@ import lombok.ToString;
 @ToString(callSuper = true)
 public class BeneficiarioEps extends Usuario{
     private Boolean tieneEntrenadorPermanente;
-    private EstadoContratoParticular estadoContrato;
+    private EstadoContratoEps estadoContrato;
     @OneToOne(mappedBy = "beneficiario", cascade = CascadeType.ALL)
     private Remision remision;
 }

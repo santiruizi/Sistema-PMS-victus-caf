@@ -1,9 +1,6 @@
 package com.victuscaf.modules.client.models;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.ToString;
@@ -23,4 +20,8 @@ public class RegistroMantenimiento {
     private String descripcion;
     private double costo;
     private String tecnicoResponsable;
+
+    @ManyToOne
+    @JoinColumn(name = "equipo_id")
+    private Equipo equipo;
 }

@@ -3,6 +3,7 @@ package com.victuscaf.modules.client.service;
 import com.victuscaf.modules.client.dto.*;
 import com.victuscaf.modules.client.models.*;
 import com.victuscaf.modules.client.repository.*;
+import com.victuscaf.modules.client.models.EstadoContratoEps;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,18 +84,18 @@ public class ClienteService {
      */
     @Transactional
     public ParticularDiario registrarParticularDiario(ClienteDiarioDTO dto) {
-        if (usuarioRepository.existsByNumeroDeDocumento(dto.getNumeroDeDocumento())) {
-            throw new RuntimeException("Ya existe un cliente con el número de documento " + dto.getNumeroDeDocumento());
+        if (usuarioRepository.existsByNumeroDeDocumento(dto.numeroDeDocumento())) {
+            throw new RuntimeException("Ya existe un cliente con el número de documento " + dto.numeroDeDocumento());
         }
 
         ParticularDiario cliente = new ParticularDiario();
-        cliente.setTipoDeDocumento(dto.getTipoDeDocumento());
-        cliente.setNumeroDeDocumento(dto.getNumeroDeDocumento());
-        cliente.setNombreCompleto(dto.getNombreCompleto());
-        cliente.setFechaDeNacimiento(dto.getFechaDeNacimiento());
-        cliente.setTelefono(dto.getTelefono());
-        cliente.setCorreoElectronico(dto.getCorreoElectronico());
-        cliente.setContrasena(dto.getContrasena());
+        cliente.setTipoDeDocumento(dto.tipoDeDocumento());
+        cliente.setNumeroDeDocumento(dto.numeroDeDocumento());
+        cliente.setNombreCompleto(dto.nombreCompleto());
+        cliente.setFechaDeNacimiento(dto.fechaDeNacimiento());
+        cliente.setTelefono(dto.telefono());
+        cliente.setCorreoElectronico(dto.correoElectronico());
+        cliente.setContrasena(dto.contrasena());
         cliente.setEstado(true);
         cliente.setTipoDeCliente(TipoDeCliente.PARTICULAR_DIARIO);
         cliente.setFechaDeIngreso(LocalDate.now());
@@ -110,21 +111,21 @@ public class ClienteService {
      */
     @Transactional
     public BeneficiarioEps registrarBeneficiarioEPS(BeneficiarioEPSDTO dto) {
-        if (usuarioRepository.existsByNumeroDeDocumento(dto.getNumeroDeDocumento())) {
-            throw new RuntimeException("Ya existe un cliente con el número de documento " + dto.getNumeroDeDocumento());
+        if (usuarioRepository.existsByNumeroDeDocumento(dto.numeroDeDocumento())) {
+            throw new RuntimeException("Ya existe un cliente con el número de documento " + dto.numeroDeDocumento());
         }
 
         BeneficiarioEps beneficiario = new BeneficiarioEps();
-        beneficiario.setTipoDeDocumento(dto.getTipoDeDocumento());
-        beneficiario.setNumeroDeDocumento(dto.getNumeroDeDocumento());
-        beneficiario.setNombreCompleto(dto.getNombreCompleto());
-        beneficiario.setFechaDeNacimiento(dto.getFechaDeNacimiento());
-        beneficiario.setTelefono(dto.getTelefono());
-        beneficiario.setCorreoElectronico(dto.getCorreoElectronico());
-        beneficiario.setContrasena(dto.getContrasena());
+        beneficiario.setTipoDeDocumento(dto.tipoDeDocumento());
+        beneficiario.setNumeroDeDocumento(dto.numeroDeDocumento());
+        beneficiario.setNombreCompleto(dto.nombreCompleto());
+        beneficiario.setFechaDeNacimiento(dto.fechaDeNacimiento());
+        beneficiario.setTelefono(dto.telefono());
+        beneficiario.setCorreoElectronico(dto.correoElectronico());
+        beneficiario.setContrasena(dto.contrasena());
         beneficiario.setEstado(true);
         beneficiario.setTipoDeCliente(TipoDeCliente.BENEFICIARIO_EPS);
-        beneficiario.setTieneEntrenadorPermanente(dto.getTieneEntrenadorPermanente());
+        beneficiario.setTieneEntrenadorPermanente(dto.tieneEntrenadorPermanente());
         beneficiario.setEstadoContrato(EstadoContratoEps.ACTIVO);
 
         BeneficiarioEps saved = beneficiarioEpsRepository.save(beneficiario);
@@ -133,13 +134,13 @@ public class ClienteService {
         Remision remision = new Remision();
         remision.setBeneficiario(saved);
         remision.setFechaInicio(LocalDate.now());
-        remision.setFechaFin(dto.getFechaFin());
-        remision.setSesionesAutorizadas(dto.getSesionesAutorizadas());
+        remision.setFechaFin(dto.fechaFin());
+        remision.setSesionesAutorizadas(dto.sesionesAutorizadas());
         remision.setSesionesAsistidas(0);
-        remision.setMedicoRemitente(dto.getMedicoRemitente());
-        remision.setEntidadEps(dto.getEntidadEps());
-        remision.setDiagnostico(dto.getDiagnostico());
-        remision.setZonaCuerpoTratar(dto.getZonaCuerpoTratar());
+        remision.setMedicoRemitente(dto.medicoRemitente());
+        remision.setEntidadEps(dto.entidadEps());
+        remision.setDiagnostico(dto.diagnostico());
+        remision.setZonaCuerpoTratar(dto.zonaCuerpoTratar());
         remision.setEstado(EstadoRemision.ACTIVO);
 
         remisionRepository.save(remision);
@@ -147,7 +148,7 @@ public class ClienteService {
         beneficiarioEpsRepository.save(saved);
 
         // Si tiene entrenador permanente, asignar
-        if (dto.getTieneEntrenadorPermanente()) {
+        if (dto.tieneEntrenadorPermanente()) {
             asignarEntrenadorAutomatico(saved);
         }
 
@@ -275,9 +276,9 @@ public class ClienteService {
         mensualDTO.setNombreCompleto(diario.getNombreCompleto());
         mensualDTO.setFechaDeNacimiento(diario.getFechaDeNacimiento());
         mensualDTO.setTelefono(diario.getTelefono());
-        mensualDTO.setCorreoElectronico(dto.getCorreoElectronico());
-        mensualDTO.setContrasena(dto.getContrasena());
-        mensualDTO.setTipoMembresia(dto.getTipoMembresia());
+        mensualDTO.setCorreoElectronico(dto.correoElectronico());
+        mensualDTO.setContrasena(dto.contrasena());
+        mensualDTO.setTipoMembresia(dto.tipoMembresia());
 
         // Registrar nuevo cliente mensual
         ParticularMensual nuevoMensual = registrarParticularMensual(mensualDTO);

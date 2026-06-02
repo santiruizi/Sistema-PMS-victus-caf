@@ -1,15 +1,14 @@
 package com.victuscaf.modules.client.service;
 
-import com.victuscaf.modules.acceso.dto.RegistroIngresoDTO;
 import com.victuscaf.modules.client.models.*;
 import com.victuscaf.modules.client.repository.*;
-import com.victuscaf.modules.client.repository.PagoRepository;
-import com.victuscaf.modules.notificacion.service.NotificacionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.List;
 
 @Service
 @RequiredArgsConstructor
@@ -22,13 +21,11 @@ public class AccesoService {
     private final RemisionRepository remisionRepository;
     private final AsistenciaRepository asistenciaRepository;
     private final PagoRepository pagoRepository;
-    private final NotificacionService notificacionService;
     private final FacturaEpsRepository facturaEpsRepository;
+    private final PagoService pagoService;  // para lógica de pagos si es necesario, aunque aquí no se usa directamente
 
-    /**
-     * Registra el ingreso de un cliente.
-     * Flujo completo: verifica estado, membresía/contrato, pago pendiente, sesiones EPS, etc.
-     */
+    // ==================== REGISTRO DE INGRESO PRINCIPAL ====================
+
     @Transactional
     public Asistencia registrarIngreso(Long numeroDocumento) {
         Usuario usuario = usuarioRepository.findByNumeroDeDocumento(numeroDocumento)
@@ -38,23 +35,20 @@ public class AccesoService {
             throw new RuntimeException("Cliente inactivo. No puede ingresar.");
         }
 
-        // Flujo según tipo de cliente
-        if (usuario.getTipoDeCliente() == TipoDeCliente.PARTICULAR_MENSUAL) {
-            return registrarIngresoMensual((ParticularMensual) usuario);
-        } else if (usuario.getTipoDeCliente() == TipoDeCliente.PARTICULAR_DIARIO) {
-            return registrarIngresoDiario((ParticularDiario) usuario);
-        } else if (usuario.getTipoDeCliente() == TipoDeCliente.BENEFICIARIO_EPS) {
-            return registrarIngresoEPS((BeneficiarioEps) usuario);
-        } else {
-            throw new RuntimeException("Tipo de cliente no válido");
-        }
+        return switch (usuario.getTipoDeCliente()) {
+            case PARTICULAR_MENSUAL -> registrarIngresoMensual((ParticularMensual) usuario);
+            case PARTICULAR_DIARIO -> registrarIngresoDiario((ParticularDiario) usuario);
+            case BENEFICIARIO_EPS -> registrarIngresoEPS((BeneficiarioEps) usuario);
+        };
     }
+
+    // ==================== INGRESO POR TIPO DE CLIENTE ====================
 
     private Asistencia registrarIngresoMensual(ParticularMensual mensual) {
         if (mensual.getEstadoMembresia() != EstadoMembresia.ACTIVO) {
             throw new RuntimeException("Membresía no activa. No puede ingresar.");
         }
-        // Verificar pago pendiente (simulación)
+        // Verificar si tiene pagos pendientes (pagos no realizados en la fecha de vencimiento)
         if (tieneSaldoPendiente(mensual)) {
             throw new RuntimeException("Pago pendiente. No puede ingresar.");
         }
@@ -62,11 +56,17 @@ public class AccesoService {
     }
 
     private Asistencia registrarIngresoDiario(ParticularDiario diario) {
-        // Para diario, debe haber pagado hoy y no tener acceso expirado
-        boolean pagoHoy = pagoRepository.existsByUsuarioAndFechaPago(diario, LocalDate.now());
+        // Verificar si pagó hoy (buscando un pago de tipo DIARIO en el repositorio)
+        boolean pagoHoy = pagoRepository.findByUsuario(diario).stream()
+                .anyMatch(p -> p.getTipoPago() == TipoDePago.DIARIO &&
+                        p.getFechaPago().equals(LocalDate.now()) &&
+                        p.getEstadoPago() == EstadoPago.EXITOSO);
+
         if (!pagoHoy) {
-            throw new RuntimeException("No ha pagado el acceso diario.");
+            throw new RuntimeException("No ha pagado el acceso diario para hoy.");
         }
+
+        // Verificar si el acceso aún no ha expirado
         if (diario.getHoraExpiracion() != null && LocalTime.now().isAfter(diario.getHoraExpiracion())) {
             throw new RuntimeException("Acceso diario expirado (2 horas).");
         }
@@ -74,12 +74,14 @@ public class AccesoService {
     }
 
     private Asistencia registrarIngresoEPS(BeneficiarioEps eps) {
+        // Verificar estado del contrato EPS
         if (eps.getEstadoContrato() != EstadoContratoEps.ACTIVO) {
-            throw new RuntimeException("Contrato EPS no activo.");
+            throw new RuntimeException("Contrato EPS no activo o bloqueado. Verifique su estado.");
         }
-        // Verificar copago pendiente
+
+        // Verificar si tiene copago pendiente (último mes sin pago)
         if (tieneCopagoPendiente(eps)) {
-            notificacionService.generarReporteCopagoPendiente(eps);
+            // Opcional: notificar a la EPS (podría ser un método en NotificacionService)
             throw new RuntimeException("Copago pendiente. No puede ingresar hasta pagarlo.");
         }
 
@@ -87,7 +89,10 @@ public class AccesoService {
         if (remision == null || remision.getEstado() != EstadoRemision.ACTIVO) {
             throw new RuntimeException("No tiene una remisión activa.");
         }
-        if (remision.calcularSesionesRestantes() <= 0) {
+
+        int sesionesRestantes = remision.calcularSesionesRestantes();
+        if (sesionesRestantes <= 0) {
+            // Finalizar remisión y contrato
             remision.setEstado(EstadoRemision.FINALIZADO);
             remisionRepository.save(remision);
             eps.setEstadoContrato(EstadoContratoEps.FINALIZADO);
@@ -105,11 +110,13 @@ public class AccesoService {
         remisionRepository.save(remision);
         beneficiarioEpsRepository.save(eps);
 
-        // Asociar asistencia a factura EPS del mes actual
+        // Asociar la asistencia a la factura EPS del mes actual
         asociarAsistenciaAFactura(eps, asistencia);
 
         return asistencia;
     }
+
+    // ==================== MÉTODOS AUXILIARES ====================
 
     private Asistencia guardarAsistencia(Usuario usuario) {
         Asistencia a = new Asistencia();
@@ -131,17 +138,28 @@ public class AccesoService {
                     return facturaEpsRepository.save(f);
                 });
         factura.getAsistencias().add(asistencia);
-        // Recalcular valor total (servicio aparte)
+        // Recalcular valor total (debería ser un método aparte en FacturaEpsService)
         facturaEpsRepository.save(factura);
     }
 
-    private boolean tieneSaldoPendiente(Usuario usuario) {
-        // Lógica real: consultar pagos no completados o facturas vencidas
-        return false; // placeholder
+    /**
+     * Verifica si un cliente particular mensual tiene saldo pendiente.
+     * Se considera saldo pendiente si no ha pagado la mensualidad del mes actual.
+     * (Simplificado: busca pagos de tipo MEMBRESIA en los últimos 30 días)
+     */
+    private boolean tieneSaldoPendiente(ParticularMensual mensual) {
+        LocalDate haceUnMes = LocalDate.now().minusDays(30);
+        return pagoRepository.findByUsuarioAndTipoPago(mensual, TipoDePago.MEMBRESIA).stream()
+                .noneMatch(p -> p.getFechaPago().isAfter(haceUnMes) && p.getEstadoPago() == EstadoPago.EXITOSO);
     }
 
+    /**
+     * Verifica si un beneficiario EPS tiene copago pendiente.
+     * Se considera pendiente si no ha pagado el copago del mes actual.
+     */
     private boolean tieneCopagoPendiente(BeneficiarioEps eps) {
-        // Lógica real: verificar si existe un pago de tipo COPAGO no completado
-        return false; // placeholder
+        LocalDate haceUnMes = LocalDate.now().minusDays(30);
+        return pagoRepository.findByUsuarioAndTipoPago(eps, TipoDePago.COPAGO).stream()
+                .noneMatch(p -> p.getFechaPago().isAfter(haceUnMes) && p.getEstadoPago() == EstadoPago.EXITOSO);
     }
 }

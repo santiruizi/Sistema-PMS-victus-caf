@@ -2,7 +2,7 @@ package com.victuscaf.modules.client.service;
 
 import com.victuscaf.modules.client.models.*;
 import com.victuscaf.modules.client.repository.*;
-import com.victuscaf.modules.evaluacion.dto.*;
+import com.victuscaf.modules.client.dto.*;
 import com.victuscaf.modules.client.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -73,11 +73,11 @@ public class EvaluacionService {
                 .orElseThrow(() -> new RuntimeException("Usuario no encontrado"));
         MetaFisica meta = new MetaFisica();
         meta.setUsuario(usuario);
-        meta.setDescripcion(dto.getDescripcion());
-        meta.setPesoObjetivo(dto.getPesoObjetivo());
-        meta.setPorcentajeGrasaObjetivo(dto.getPorcentajeGrasaObjetivo());
-        meta.setPerimetroCinturaObjetivo(dto.getPerimetroCinturaObjetivo());
-        meta.setFechaObjetivo(dto.getFechaObjetivo());
+        meta.setDescripcion(dto.descripcion());
+        meta.setPesoObjetivo(dto.pesoObjetivo());
+        meta.setPorcentajeGrasaObjetivo(dto.porcentajeGrasaObjetivo());
+        meta.setPerimetroCinturaObjetivo(dto.perimetroCinturaObjetivo());
+        meta.setFechaObjetivo(dto.fechaObjetivo());
         return metaRepository.save(meta);
     }
 
@@ -87,24 +87,25 @@ public class EvaluacionService {
                 .orElseThrow(() -> new RuntimeException("Beneficiario no encontrado"));
         MetaFisica meta = new MetaFisica();
         meta.setUsuario(eps);
-        meta.setObservacionMedica(dto.getObservacionMedica());
-        meta.setDescripcion("Objetivo clínico: " + dto.getObjetivoClinico());
+        meta.setObservacionMedica(dto.observacionMedica());
+        meta.setDescripcion("Objetivo clínico: " + dto.objetivoClinico());
         // otros campos opcionales
         return metaRepository.save(meta);
     }
 
     public ProgresoDTO consultarProgreso(Long numeroDocumento) {
-        // Lógica para comparar primera y última evaluación
         List<EvaluacionFisica> evaluaciones = consultarHistorial(numeroDocumento);
         if (evaluaciones.size() < 2) {
             throw new RuntimeException("No hay suficientes evaluaciones para mostrar progreso");
         }
-        EvaluacionFisica inicial = evaluaciones.get(0);
-        EvaluacionFisica ultima = evaluaciones.get(evaluaciones.size() - 1);
-        ProgresoDTO progreso = new ProgresoDTO();
-        progreso.setPesoPerdido(inicial.getPeso() - ultima.getPeso());
-        progreso.setImcActual(ultima.getImc());
-        // más campos...
-        return progreso;
+        EvaluacionFisica inicial = evaluaciones.getFirst();
+        EvaluacionFisica ultima = evaluaciones.getLast();
+
+        double pesoPerdido = inicial.getPeso() - ultima.getPeso();
+        double imcActual = ultima.getImc();
+        double porcentajeGrasaActual = ultima.getPorcentajeGrasa(); // asegúrate de tener este campo
+        String mensaje = "Progreso desde la evaluación inicial";
+
+        return new ProgresoDTO(pesoPerdido, imcActual, porcentajeGrasaActual, mensaje);
     }
 }

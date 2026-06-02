@@ -2,7 +2,7 @@ package com.victuscaf.modules.client.service;
 
 import com.victuscaf.modules.client.models.*;
 import com.victuscaf.modules.client.repository.*;
-import com.victuscaf.modules.entrenador.dto.*;
+import com.victuscaf.modules.client.dto.*;
 import com.victuscaf.modules.client.repository.*;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -22,16 +22,16 @@ public class EntrenadorService {
     // CRUD Entrenador (solo admin)
     @Transactional
     public Entrenador crearEntrenador(EntrenadorDTO dto) {
-        if (entrenadorRepository.findByNumeroDeDocumento(dto.getNumeroDeDocumento()).isPresent()) {
+        if (entrenadorRepository.findByNumeroDeDocumento(dto.numeroDeDocumento()).isPresent()) {
             throw new RuntimeException("Ya existe un entrenador con ese documento");
         }
         Entrenador e = new Entrenador();
-        e.setNumeroDeDocumento(dto.getNumeroDeDocumento());
-        e.setNombreCompleto(dto.getNombreCompleto());
-        e.setCorreoElectronico(dto.getCorreoElectronico());
-        e.setContrasena(dto.getContrasena());
-        e.setEspecialidad(dto.getEspecialidad());
-        e.setSalario(dto.getSalario());
+        e.setNumeroDeDocumento(dto.numeroDeDocumento());
+        e.setNombreCompleto(dto.nombreCompleto());
+        e.setCorreoElectronico(dto.correoElectronico());
+        e.setContrasena(dto.contrasena());
+        e.setEspecialidad(dto.especialidad());
+        e.setSalario(dto.salario());
         e.setCantidadClientesActivos(0);
         e.setEstado(true);
         e.setRol(Rol.ENTRENADOR);
@@ -45,9 +45,9 @@ public class EntrenadorService {
                 .orElseThrow(() -> new RuntimeException("Entrenador no encontrado"));
         HorarioEntrenador horario = new HorarioEntrenador();
         horario.setEntrenador(entrenador);
-        horario.setFechaDisponible(dto.getFechaDisponible());
-        horario.setHoraInicio(dto.getHoraInicio());
-        horario.setHoraFin(dto.getHoraFin());
+        horario.setFechaDisponible(dto.fechaDisponible());
+        horario.setHoraInicio(dto.horaInicio());
+        horario.setHoraFin(dto.horaFin());
         horario.setDisponible(true);
         return horarioRepository.save(horario);
     }
@@ -76,10 +76,10 @@ public class EntrenadorService {
         Rutina rutina = new Rutina();
         rutina.setEntrenador(entrenador);
         rutina.setUsuario(cliente);
-        rutina.setNombre(dto.getNombre());
-        rutina.setDescripcion(dto.getDescripcion());
+        rutina.setNombre(dto.nombre());
+        rutina.setDescripcion(dto.descripcion());
         rutina.setFechaCreacion(java.time.LocalDate.now());
-        rutina.setFechaVencimiento(dto.getFechaVencimiento());
+        rutina.setFechaVencimiento(dto.fechaVencimiento());
         rutina.setActiva(true);
         return rutinaRepository.save(rutina);
     }

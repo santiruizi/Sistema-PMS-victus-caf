@@ -1,6 +1,6 @@
 package com.victuscaf.modules.client.service;
 
-import com.victuscaf.modules.inventario.dto.*;
+import com.victuscaf.modules.client.dto.*;
 import com.victuscaf.modules.client.repository.*;
 import com.victuscaf.modules.client.models.*;
 import lombok.RequiredArgsConstructor;
@@ -19,11 +19,11 @@ public class InventarioService {
     @Transactional
     public Equipo crearEquipo(EquipoDTO dto) {
         Equipo equipo = new Equipo();
-        equipo.setNombre(dto.getNombre());
-        equipo.setDescripcion(dto.getDescripcion());
-        equipo.setFechaAdquisicion(dto.getFechaAdquisicion());
-        equipo.setEstadoEquipo(dto.getEstadoEquipo());
-        equipo.setProximoMantenimiento(dto.getProximoMantenimiento());
+        equipo.setNombre(dto.nombre());
+        equipo.setDescripcion(dto.descripcion());
+        equipo.setFechaAdquisicion(dto.fechaAdquisicion());
+        equipo.setEstadoEquipo(dto.estadoEquipo());
+        equipo.setProximoMantenimiento(dto.proximoMantenimiento());
         return equipoRepository.save(equipo);
     }
 
@@ -33,13 +33,13 @@ public class InventarioService {
                 .orElseThrow(() -> new RuntimeException("Equipo no encontrado"));
         RegistroMantenimiento rm = new RegistroMantenimiento();
         rm.setEquipo(equipo);
-        rm.setFechaMantenimiento(dto.getFechaMantenimiento());
-        rm.setDescripcion(dto.getDescripcionTrabajo());
-        rm.setCosto(dto.getCosto());
-        rm.setTecnicoResponsable(dto.getTecnicoResponsable());
+        rm.setFechaMantenimiento(dto.fechaMantenimiento());
+        rm.setDescripcion(dto.descripcionTrabajo());
+        rm.setCosto(dto.costo());
+        rm.setTecnicoResponsable(dto.tecnicoResponsable());
         // Actualizar próximo mantenimiento si se indica
-        if (dto.getProximoMantenimiento() != null) {
-            equipo.setProximoMantenimiento(dto.getProximoMantenimiento());
+        if (dto.proximoMantenimiento() != null) {
+            equipo.setProximoMantenimiento(dto.proximoMantenimiento());
             equipoRepository.save(equipo);
         }
         return mantenimientoRepository.save(rm);

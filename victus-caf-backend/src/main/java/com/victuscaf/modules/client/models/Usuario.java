@@ -1,17 +1,15 @@
 package com.victuscaf.modules.client.models;
 
 import jakarta.persistence.*;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
-import lombok.ToString;
+import lombok.*;
 
 import java.time.LocalDate;
 
 @Entity
 @Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Inheritance(strategy = InheritanceType.JOINED)
-@ToString
-@EqualsAndHashCode
 public abstract class  Usuario {
 
     @Id
@@ -24,7 +22,7 @@ public abstract class  Usuario {
     private LocalDate fechaDeNacimiento;
     private Long telefono;
     private String contrasena;
-    private String correo;
+    private String correoElectronico;
     private Boolean estado;
     @Enumerated(EnumType.STRING)
     private TipoDeCliente tipoDeCliente;
