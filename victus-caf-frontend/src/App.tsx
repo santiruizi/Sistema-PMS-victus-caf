@@ -1,37 +1,70 @@
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Login from './pages/Login';
-import ListaClientesMensuales from './pages/ListaClientesMensuales';
-
-const Dashboard = () => {
-    const user = JSON.parse(localStorage.getItem('user') || '{}');
-    return (
-        <div>
-            <h1>Bienvenido, {user.nombreCompleto || 'Usuario'}</h1>
-            <p>Rol: {user.rol}</p>
-            <nav>
-                <ul>
-                    <li><a href="/clientes">Clientes Mensuales</a></li>
-                </ul>
-            </nav>
-            <button onClick={() => {
-                localStorage.clear();
-                window.location.href = '/login';
-            }}>Cerrar sesión</button>
-        </div>
-    );
-};
+import AdminDashboard from './pages/AdminDashboard';
+import SecretariaDashboard from './pages/SecretariaDashboard';
+import EntrenadorDashboard from './pages/EntrenadorDashboard';
+import ClienteDashboard from './pages/ClienteDashboard';
+import { PrivateRoute } from './components/PrivateRoute';
 
 function App() {
-    const token = localStorage.getItem('token');
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="/login" element={<Login />} />
-                <Route path="/" element={token ? <Dashboard /> : <Navigate to="/login" />} />
-                <Route path="/clientes" element={token ? <ListaClientesMensuales /> : <Navigate to="/login" />} />
-            </Routes>
-        </BrowserRouter>
-    );
+  const userStr = localStorage.getItem('user');
+  let rol = '';
+  if (userStr) {
+    try {
+      const user = JSON.parse(userStr);
+      rol = user.rol;
+    } catch (e) {}
+  }
+
+  // Redirigir desde la raíz según el rol (opcional)
+  const getDefaultRoute = () => {
+    if (rol === 'ADMINISTRADOR') return <Navigate to="/admin" />;
+    if (rol === 'SECRETARIA') return <Navigate to="/secretaria" />;
+    if (rol === 'ENTRENADOR') return <Navigate to="/entrenador" />;
+    if (rol) return <Navigate to="/cliente" />;
+    return <Navigate to="/login" />;
+  };
+
+  return (
+    <BrowserRouter>
+      <Routes>
+        <Route path="/login" element={<Login />} />
+        <Route
+          path="/admin"
+          element={
+            <PrivateRoute allowedRoles={['ADMINISTRADOR']}>
+              <AdminDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/secretaria"
+          element={
+            <PrivateRoute allowedRoles={['SECRETARIA']}>
+              <SecretariaDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/entrenador"
+          element={
+            <PrivateRoute allowedRoles={['ENTRENADOR']}>
+              <EntrenadorDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/cliente"
+          element={
+            <PrivateRoute allowedRoles={['CLIENTE']}>
+              <ClienteDashboard />
+            </PrivateRoute>
+          }
+        />
+        <Route path="/" element={getDefaultRoute()} />
+      </Routes>
+    </BrowserRouter>
+  );
 }
 
 export default App;
