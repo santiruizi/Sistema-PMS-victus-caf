@@ -13,4 +13,6 @@ public interface ParticularDiarioRepository extends JpaRepository<ParticularDiar
     Optional<ParticularDiario> findByNumeroDeDocumento(Long numeroDocumento);
 
     List<ParticularDiario> findByFechaDeIngreso(LocalDate fecha);
+
+    List<ParticularDiario> findByEstadoTrue();
 }

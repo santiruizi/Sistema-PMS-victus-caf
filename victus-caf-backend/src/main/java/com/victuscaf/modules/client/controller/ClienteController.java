@@ -140,11 +140,32 @@ public class ClienteController {
                 clienteService.listarTodosParticularesMensuales()));
     }
 
+    @GetMapping("/diarios/activos")
+    @PreAuthorize("hasRole('SECRETARIA') or hasRole('ADMINISTRADOR')")
+    public ResponseEntity<ApiResponse<List<ParticularDiario>>> listarParticularesDiariosActivos() {
+        return ResponseEntity.ok(ApiResponse.success("Lista de clientes diarios activos",
+                clienteService.listarParticularesDiariosActivos()));
+    }
+
+    @GetMapping("/diarios/todos")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<ApiResponse<List<ParticularDiario>>> listarTodosParticularesDiarios() {
+        return ResponseEntity.ok(ApiResponse.success("Lista completa de clientes diarios",
+                clienteService.listarTodosParticularesDiarios()));
+    }
+
     @GetMapping("/eps/activos")
     @PreAuthorize("hasRole('SECRETARIA') or hasRole('ADMINISTRADOR')")
     public ResponseEntity<ApiResponse<List<BeneficiarioEps>>> listarBeneficiariosEPSActivos() {
         return ResponseEntity.ok(ApiResponse.success("Beneficiarios EPS activos",
                 clienteService.consultarBeneficiariosEPSActivos()));
+    }
+
+    @GetMapping("/eps/todos")
+    @PreAuthorize("hasRole('ADMINISTRADOR')")
+    public ResponseEntity<ApiResponse<List<BeneficiarioEps>>> listarTodosBeneficiariosEPS() {
+        return ResponseEntity.ok(ApiResponse.success("Lista completa de beneficiarios EPS",
+                clienteService.listarTodosBeneficiariosEPS()));
     }
 
     @GetMapping("/contratos/vencidos")

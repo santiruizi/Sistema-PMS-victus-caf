@@ -17,4 +17,8 @@ public interface UsuarioSistemaRepository extends JpaRepository<UsuarioSistema, 
     List<UsuarioSistema> findByEstadoTrue();
 
     boolean existsByNumeroDeDocumento(Long numeroDocumento);
+
+    long countByRol(Rol rol);
+
+    long countByRolAndEstado(Rol rol, Boolean estado);
 }

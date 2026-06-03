@@ -5,6 +5,11 @@ import SecretariaDashboard from './pages/SecretariaDashboard';
 import EntrenadorDashboard from './pages/EntrenadorDashboard';
 import ClienteDashboard from './pages/ClienteDashboard';
 import { PrivateRoute } from './components/PrivateRoute';
+import RegistrarClienteMensual from './pages/RegistrarClienteMensual';
+import RegistrarClienteDiario from './pages/RegistrarClienteDiario';
+import RegistrarClienteEps from './pages/RegistrarClienteEps';
+import GestionClientes from './pages/GestionClientes';
+import { Toaster } from 'react-hot-toast';
 
 function App() {
   const userStr = localStorage.getItem('user');
@@ -26,8 +31,10 @@ function App() {
   };
 
   return (
-    <BrowserRouter>
-      <Routes>
+    <>
+      <Toaster position="top-right" />
+      <BrowserRouter>
+        <Routes>
         <Route path="/login" element={<Login />} />
         <Route
           path="/admin"
@@ -61,9 +68,42 @@ function App() {
             </PrivateRoute>
           }
         />
+        <Route
+          path="/gestion-clientes"
+          element={
+            <PrivateRoute allowedRoles={['ADMINISTRADOR', 'SECRETARIA']}>
+              <GestionClientes />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/registrar-cliente-mensual"
+          element={
+            <PrivateRoute allowedRoles={['ADMINISTRADOR', 'SECRETARIA']}>
+              <RegistrarClienteMensual />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/registrar-cliente-diario"
+          element={
+            <PrivateRoute allowedRoles={['ADMINISTRADOR', 'SECRETARIA']}>
+              <RegistrarClienteDiario />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/registrar-cliente-eps"
+          element={
+            <PrivateRoute allowedRoles={['ADMINISTRADOR', 'SECRETARIA']}>
+              <RegistrarClienteEps />
+            </PrivateRoute>
+          }
+        />
         <Route path="/" element={getDefaultRoute()} />
       </Routes>
     </BrowserRouter>
+    </>
   );
 }
 

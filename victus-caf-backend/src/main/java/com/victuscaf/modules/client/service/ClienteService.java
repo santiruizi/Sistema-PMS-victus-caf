@@ -182,6 +182,18 @@ public class ClienteService {
         return particularMensualRepository.findAll();
     }
 
+    public List<ParticularDiario> listarParticularesDiariosActivos() {
+        return particularDiarioRepository.findByEstadoTrue();
+    }
+
+    public List<ParticularDiario> listarTodosParticularesDiarios() {
+        return particularDiarioRepository.findAll();
+    }
+
+    public List<BeneficiarioEps> listarTodosBeneficiariosEPS() {
+        return beneficiarioEpsRepository.findAll();
+    }
+
     // ==================== ACTUALIZACIÓN ====================
 
     @Transactional
