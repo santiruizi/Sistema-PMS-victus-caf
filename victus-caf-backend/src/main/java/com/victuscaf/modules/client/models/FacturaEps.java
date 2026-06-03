@@ -1,17 +1,19 @@
 package com.victuscaf.modules.client.models;
 
 import jakarta.persistence.*;
-import lombok.*;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.AllArgsConstructor;
+
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
 
 @Entity
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class FacturaEps {
-    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     private LocalDate fechaGeneracion;
@@ -23,7 +25,4 @@ public class FacturaEps {
 
     @Enumerated(EnumType.STRING)
     private EstadoFacturaEps estado;
-
-    @OneToMany(mappedBy = "facturaEps", cascade = CascadeType.ALL)
-    private List<Asistencia> asistencias = new ArrayList<>();
 }
