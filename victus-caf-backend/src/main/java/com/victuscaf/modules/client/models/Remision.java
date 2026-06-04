@@ -1,5 +1,6 @@
 package com.victuscaf.modules.client.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -27,6 +28,7 @@ public class Remision {
     @Enumerated(EnumType.STRING)
     private EstadoRemision estado;
 
+    @JsonBackReference
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "beneficiario_id")
     private BeneficiarioEps beneficiario;

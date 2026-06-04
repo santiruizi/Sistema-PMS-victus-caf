@@ -42,8 +42,8 @@ export default function AdminDashboard() {
   const cargarUsuarios = async () => {
     setLoading(true);
     try {
-      const res = await listarUsuarios();
-      setUsuarios(res.data);
+      const data = await listarUsuarios();
+      setUsuarios(data);
     } catch (err) {
       toast.error(
         isServerUnreachable(err) ? SERVER_UNREACHABLE_MESSAGE : 'Error al cargar usuarios'
@@ -91,8 +91,7 @@ export default function AdminDashboard() {
       return;
     }
     try {
-      const res = await buscarUsuarioPorDocumento(doc);
-      const encontrado = res.data;
+      const encontrado = await buscarUsuarioPorDocumento(doc);
       setUsuarios((prev) =>
         prev.some((u) => u.idUsuarioSistema === encontrado.idUsuarioSistema)
           ? prev

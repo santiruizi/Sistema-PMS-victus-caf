@@ -5,29 +5,24 @@ interface DocumentTypeBarProps {
 }
 
 const TIPOS = [
-  { code: 'CC', label: 'CC' },
-  { code: 'TI', label: 'TI' },
-  { code: 'CE', label: 'CE' },
+  { code: 'CC', label: 'Cédula de Ciudadanía' },
+  { code: 'TI', label: 'Tarjeta de Identidad' },
+  { code: 'CE', label: 'Cédula de Extranjería' },
 ] as const;
 
 export default function DocumentTypeBar({ value, onChange, disabled }: DocumentTypeBarProps) {
   return (
-    <div className="flex rounded-md border border-gray-300 overflow-hidden">
+    <select
+      value={value}
+      onChange={(e) => onChange(e.target.value)}
+      disabled={disabled}
+      className="w-full px-3 py-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500 bg-white"
+    >
       {TIPOS.map((tipo) => (
-        <button
-          key={tipo.code}
-          type="button"
-          disabled={disabled}
-          onClick={() => onChange(tipo.code)}
-          className={`flex-1 py-2 text-sm font-medium transition-colors ${
-            value === tipo.code
-              ? 'bg-blue-600 text-white'
-              : 'bg-white text-gray-700 hover:bg-gray-50'
-          } ${disabled ? 'opacity-50 cursor-not-allowed' : ''}`}
-        >
+        <option key={tipo.code} value={tipo.code}>
           {tipo.label}
-        </button>
+        </option>
       ))}
-    </div>
+    </select>
   );
 }

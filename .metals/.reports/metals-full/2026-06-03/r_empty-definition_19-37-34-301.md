@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/service/ClienteService.java:_empty_/ClienteDiarioDTO#numeroDeDocumento#
+file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/service/ClienteService.java
+empty definition using pc, found symbol in pc: _empty_/ClienteDiarioDTO#numeroDeDocumento#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 3768
+uri: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/service/ClienteService.java
+text:
+```scala
 package com.victuscaf.modules.client.service;
 
 import com.victuscaf.modules.client.dto.*;
@@ -11,8 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
 
 @Service
 @RequiredArgsConstructor
@@ -86,7 +95,7 @@ public class ClienteService {
      */
     @Transactional
     public ParticularDiario registrarParticularDiario(ClienteDiarioDTO dto) {
-        if (usuarioRepository.existsByNumeroDeDocumento(dto.numeroDeDocumento())) {
+        if (usuarioRepository.existsByNumeroDeDocumento(dto.@@numeroDeDocumento())) {
             throw new RuntimeException("Ya existe un cliente con el número de documento " + dto.numeroDeDocumento());
         }
 
@@ -172,57 +181,6 @@ public class ClienteService {
     public BeneficiarioEps consultarBeneficiarioEPSPorDocumento(Long numeroDocumento) {
         return beneficiarioEpsRepository.findByNumeroDeDocumento(numeroDocumento)
                 .orElseThrow(() -> new RuntimeException("Beneficiario EPS no encontrado"));
-    }
-
-    /**
-     * Método de depuración que devuelve registros relacionados para un documento.
-     * Retorna un mapa con claves: usuario, particularMensual, contrato (si existen).
-     */
-    public Map<String, Object> debugConsultarParticularMensual(Long numeroDocumento) {
-        Map<String, Object> result = new HashMap<>();
-
-        usuarioRepository.findByNumeroDeDocumento(numeroDocumento).ifPresent(u -> {
-            Map<String, Object> uMap = new HashMap<>();
-            uMap.put("id", u.getId());
-            uMap.put("tipoDeDocumento", u.getTipoDeDocumento());
-            uMap.put("numeroDeDocumento", u.getNumeroDeDocumento());
-            uMap.put("nombreCompleto", u.getNombreCompleto());
-            uMap.put("fechaDeNacimiento", u.getFechaDeNacimiento());
-            uMap.put("telefono", u.getTelefono());
-            uMap.put("correoElectronico", u.getCorreoElectronico());
-            uMap.put("estado", u.getEstado());
-            uMap.put("tipoDeCliente", u.getTipoDeCliente());
-            result.put("usuario", uMap);
-        });
-
-        particularMensualRepository.findByNumeroDeDocumento(numeroDocumento).ifPresent(p -> {
-            Map<String, Object> pMap = new HashMap<>();
-            pMap.put("id", p.getId());
-            pMap.put("tipoDeDocumento", p.getTipoDeDocumento());
-            pMap.put("numeroDeDocumento", p.getNumeroDeDocumento());
-            pMap.put("nombreCompleto", p.getNombreCompleto());
-            pMap.put("fechaDeNacimiento", p.getFechaDeNacimiento());
-            pMap.put("telefono", p.getTelefono());
-            pMap.put("correoElectronico", p.getCorreoElectronico());
-            pMap.put("estado", p.getEstado());
-            pMap.put("tipoDeCliente", p.getTipoDeCliente());
-            pMap.put("tieneEntrenador", p.getTieneEntrenador());
-            pMap.put("estadoMembresia", p.getEstadoMembresia());
-            result.put("particularMensual", pMap);
-
-            contratoRepository.findByCliente(p).ifPresent(c -> {
-                Map<String, Object> cMap = new HashMap<>();
-                cMap.put("id", c.getId());
-                cMap.put("fechaInicio", c.getFechaInicio());
-                cMap.put("fechaVencimiento", c.getFechaVencimiento());
-                cMap.put("tipoMembresia", c.getTipoMembresia());
-                cMap.put("estado", c.getEstado());
-                // Evitar incluir el objeto cliente dentro del contrato para prevenir recursión
-                result.put("contrato", cMap);
-            });
-        });
-
-        return result;
     }
 
     // Versión para secretaria (solo muestra clientes activos)
@@ -449,3 +407,9 @@ public class ClienteService {
         return beneficiarioEpsRepository.findByEstadoContrato(EstadoContratoEps.ACTIVO);
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/ClienteDiarioDTO#numeroDeDocumento#

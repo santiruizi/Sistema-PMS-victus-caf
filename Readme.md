@@ -1,451 +1,194 @@
-# 🏋️️ Victus CAF - Sistema de Gestión para Centro de Acondicionamiento Físico
+# 🏋️ Victus CAF
 
-## 📖 Introducción
+## ¿Qué es Victus CAF?
+Victus CAF es un sistema de gestión para un Centro de Acondicionamiento Físico (CAF). Está diseñado para administrar clientes, contratos, remisiones médicas, pagos, evaluaciones físicas, control de acceso y los distintos roles que intervienen en el proceso operativo.
 
-**Victus CAF** es un sistema de información diseñado para administrar de forma integral un Centro de Acondicionamiento Físico (CAF) que opera con dos tipos de clientes:
+El proyecto combina:
+- Backend en **Spring Boot 3.2.5** y **Java 21**
+- Base de datos **MariaDB / MySQL**
+- Frontend en **React 18 + TypeScript** con **Vite**
+- Autenticación mediante **JWT** y control de acceso por roles
 
-- Usuarios particulares (membresía mensual o acceso diario).
-- Usuarios subsidiados remitidos por Entidades Promotoras de Salud (EPS).
+## Objetivo del sistema
+Permitir a un CAF manejar:
+- clientes particulares con membresía mensual o acceso diario
+- beneficiarios de EPS con remisión médica
+- contratos y pagos
+- entrenadores y evaluaciones
+- roles administrativos y de secretaria
+- búsqueda y gestión de clientes desde el panel
 
-El sistema busca centralizar y automatizar procesos críticos relacionados con la administración del centro deportivo, el seguimiento de usuarios, la gestión financiera y el control operativo.
-
-### Funcionalidades principales
-
-- Registro y clasificación de clientes según su tipo de vinculación.
-- Control de contratos de membresía y remisiones médicas (sesiones autorizadas por EPS).
-- Gestión de pagos, métodos de pago y flujo de caja diario.
-- Control de acceso mediante verificación de estado de pago y vigencia de contrato.
-- Asignación de entrenadores y seguimiento de rutinas de entrenamiento.
-- Registro de evaluaciones físicas y evolución del cliente.
-- Generación de reportes financieros y clínicos para la EPS.
-- Auditoría de acciones mediante bitácora y notificaciones automáticas.
-
-El proyecto se desarrolla como una aplicación web completa con **backend en Spring Boot 3.2.5 (Java 21)** y **frontend en React + TypeScript**, siguiendo el patrón **MVC (Modelo-Vista-Controlador)** y exponiendo servicios mediante una API REST protegida con JWT.
-
----
-
-# 🧱 Arquitectura General
-
-El sistema sigue una arquitectura de tres capas (MVC) tanto en backend como en frontend.
-
-## Backend (Spring Boot)
-
-### Modelo
-Entidades JPA que representan la estructura relacional de la base de datos.
-
-### Vista
-No aplica en backend. La información es expuesta mediante API REST.
-
-### Controlador
-Controladores REST encargados de recibir peticiones HTTP y delegar la lógica de negocio a los servicios.
+## Características principales
+- Login con JWT
+- Roles: **ADMINISTRADOR**, **SECRETARIA**, **ENTRENADOR**
+- CRUD de usuarios del sistema
+- Registro de clientes mensuales, diarios y beneficiarios EPS
+- Generación automática de contrato para clientes mensuales
+- Buscadores por documento
+- Rutas protegidas en frontend
+- CORS habilitado para `http://localhost:5173`
 
 ---
 
-## Frontend (React + TypeScript)
+## Estructura del proyecto
 
-### Modelo
-Interfaces y modelos TypeScript utilizados para representar los datos consumidos desde la API.
-
-### Vista
-Componentes React organizados por módulos funcionales.
-
-### Controlador
-Hooks personalizados y servicios encargados de la interacción con la API y la gestión del estado.
-
----
-
-## Base de Datos
-
-- Motor: MySQL 8.
-- ORM: JPA/Hibernate.
-- Estrategia de herencia: `JOINED`.
-- Relaciones mediante:
-    - `@OneToOne`
-    - `@OneToMany`
-    - `@ManyToOne`
-
----
-
-## Comunicación
-
-- API REST.
-- Formato JSON.
-- Autenticación JWT.
-- Control de acceso basado en roles.
-
-### Roles del sistema
-
-- ADMINISTRADOR
-- SECRETARIA
-- ENTRENADOR
-- PARTICULAR_MENSUAL
-- PARTICULAR_DIARIO
-- BENEFICIARIO_EPS
-
----
-
-# 🧩 Decisiones Técnicas Clave
-
-| Área | Decisión | Justificación |
-|--------|--------|--------|
-| Backend | Spring Boot 3.2.5 | Framework robusto y ampliamente utilizado |
-| Lenguaje Backend | Java 21 | Versión LTS requerida por Spring Boot 3 |
-| Persistencia | JPA/Hibernate JOINED | Base de datos normalizada y extensible |
-| Base de Datos | MySQL 8 | Motor relacional ampliamente soportado |
-| Frontend | React + Vite | Desarrollo moderno y eficiente |
-| Lenguaje Frontend | TypeScript | Tipado estático y mantenibilidad |
-| Seguridad | JWT | Arquitectura stateless |
-| Metodología | PSP | Seguimiento individual de tiempos y defectos |
-
----
-
-# 📁 Estructura del Proyecto
-
+### Raíz del workspace
 ```text
 victus-caf/
-│
-├── backend/
-│   ├── src/main/java/com/victuscaf/
-│   │   ├── VictusCafApplication.java
-│   │   │
-│   │   ├── config/
-│   │   │   ├── SecurityConfig.java
-│   │   │   ├── JwtFilter.java
-│   │   │   └── CorsConfig.java
-│   │   │
-│   │   ├── modules/
-│   │   │   ├── cliente/
-│   │   │   │   ├── controller/
-│   │   │   │   ├── service/
-│   │   │   │   ├── repository/
-│   │   │   │   ├── model/
-│   │   │   │   └── dto/
-│   │   │   │
-│   │   │   ├── pago/
-│   │   │   ├── acceso/
-│   │   │   ├── evaluacion/
-│   │   │   ├── entrenador/
-│   │   │   ├── inventario/
-│   │   │   └── notificacion/
-│   │   │
-│   │   ├── security/
-│   │   │   ├── JwtUtil.java
-│   │   │   └── UserDetailsServiceImpl.java
-│   │   │
-│   │   └── exception/
-│   │       └── GlobalExceptionHandler.java
-│   │
-│   └── src/main/resources/
-│       ├── application.properties
-│       └── db/migration/
-│
-├── frontend/
-│   ├── src/
-│   │   ├── models/
-│   │   ├── views/
-│   │   │   ├── common/
-│   │   │   ├── layouts/
-│   │   │   └── modules/
-│   │   │
-│   │   ├── controllers/
-│   │   ├── services/
-│   │   ├── context/
-│   │   ├── hooks/
-│   │   ├── routes/
-│   │   ├── utils/
-│   │   └── styles/
-│   │
-│   ├── public/
-│   ├── .env
-│   ├── package.json
-│   └── vite.config.ts
-│
-├── docs/
-│   ├── requisitos/
-│   └── uml/
-│
-└── README.md
+├── Readme.md
+├── HELP.md
+├── LICENSE
+├── victus-caf-backend/
+└── victus-caf-frontend/
 ```
 
----
-
-# 🗃️ Modelo de Datos
-
-## Jerarquía de Clientes (JOINED)
-
-### Usuario (Abstracta)
-
-Atributos comunes:
-
-- id
-- numeroDeDocumento
-- nombreCompleto
-- correoElectronico
-- contrasena
-- estado
-- tipoDeCliente
-
-### ParticularMensual
-
-Atributos:
-
-- tieneEntrenador
-- estadoMembresia
-
-Relaciones:
-
-- OneToOne → Contrato
-
-### ParticularDiario
-
-Atributos:
-
-- fechaDeIngreso
-- horaIngreso
-- horaExpiracion
-
-### BeneficiarioEps
-
-Atributos:
-
-- tieneEntrenadorPermanente
-- estadoContrato
-
-Relaciones:
-
-- OneToOne → Remision
-
----
-
-## Jerarquía de Usuarios del Sistema
-
-### UsuarioSistema (Abstracta)
-
-Atributos comunes:
-
-- idUsuarioSistema
-- numeroDeDocumento
-- nombreCompleto
-- correoElectronico
-- rol
-- estado
-
-### Administrador
-
-Sin atributos adicionales.
-
-### Entrenador
-
-Atributos:
-
-- especialidad
-- cantidadClientesActivos
-- salario
-
-### Secretaria
-
-Atributos:
-
-- turno
-
----
-
-## Entidades Principales
-
-| Entidad | Relación | Descripción |
-|----------|----------|----------|
-| Remision | 1-1 BeneficiarioEps | Información médica y sesiones autorizadas |
-| Contrato | 1-1 ParticularMensual | Gestión de membresías |
-| Asistencia | N-1 Usuario | Registro de ingresos |
-| EvaluacionFisica | N-1 Usuario y Entrenador | Historial físico |
-| MetaFisica | 1-1 Usuario | Objetivos del usuario |
-| Rutina | N-1 Usuario y Entrenador | Planes de entrenamiento |
-| HorarioEntrenador | N-1 Entrenador | Disponibilidad |
-| Mensaje | N-1 Entrenador y Usuario | Comunicación interna |
-| Pago | N-1 Usuario y Contrato | Gestión financiera |
-| FacturaEps | 1-N Asistencia | Consolidado de facturación |
-| FlujoDeCaja | 1-N Pago y GastoOperativo | Control financiero |
-| GastoOperativo | N-1 FlujoDeCaja | Gastos administrativos |
-| Equipo | 1-N RegistroMantenimiento | Inventario |
-| Tarifa | - | Tarifas vigentes |
-| BitacoraAccion | - | Auditoría |
-| Notificacion | N-1 UsuarioSistema | Alertas internas |
-
----
-
-## Enums Principales
-
-- TipoDeCliente
-- EstadoMembresia
-- EstadoContratoEps
-- EstadoRemision
-- EstadoFacturaEps
-- MetodoDePago
-- TipoDePago
-- EstadoPago
-- Rol
-- Turno
-- TipoGasto
-- TipoAccion
-- EstadoEquipo
-
----
-
-# 🔄 Flujo de Negocio Ejemplo
-
-## Registro de Asistencia EPS
-
-1. La secretaria ingresa el documento del beneficiario.
-2. El sistema valida que exista.
-3. Verifica que el estado sea activo.
-4. Verifica que el contrato EPS esté activo.
-5. Comprueba copagos pendientes.
-6. Consulta la remisión asociada.
-7. Calcula sesiones disponibles.
-8. Registra la asistencia.
-9. Actualiza sesiones utilizadas.
-10. Si se completan las sesiones:
-    - Finaliza la remisión.
-    - Finaliza el contrato EPS.
-11. Asocia la asistencia a la factura mensual EPS.
-12. Devuelve respuesta de éxito o error.
-
-Este flujo corresponde a los RF-63, RF-RE-05, RF-RE-08 y RF-PA-12.
-
----
-
-# 🛠️ Tecnologías
-
-| Componente | Tecnología | Versión |
-|------------|------------|----------|
-| Backend | Spring Boot | 3.2.5 |
-| Java | OpenJDK | 21 |
-| Base de Datos | MySQL | 8.0 |
-| ORM | Hibernate (JPA) | 6.3+ |
-| Seguridad | Spring Security + JWT | 6.2+ |
-| Frontend | React + Vite | 18.2 + 5.0 |
-| Lenguaje Frontend | TypeScript | 5.0 |
-| Cliente HTTP | Axios | 1.6 |
-| Estilos | Tailwind CSS | 3.4 |
-| Build | Maven / npm | 3.9+ / 10+ |
-
----
-
-# 📈 Estado Actual del Desarrollo
-
-## ✅ Completado
-
-- 164 Requerimientos Funcionales.
-- 78 Historias de Usuario.
-- Diagrama de clases UML completo.
-- Diagrama de secuencia de asistencia EPS.
-- Estructura de carpetas definida.
-- Entidades JPA completas.
-- Enums completos.
-- Repositorios JPA implementados.
-
-## 🚧 En Progreso
-
-- Servicios de negocio.
-- Controladores REST.
-- Seguridad JWT.
-- Integración frontend-backend.
-- Pruebas de integración.
-
-## 🔮 Escalabilidad Futura
-
-- Soporte para múltiples sedes.
-- Integración con pasarelas de pago.
-- WhatsApp Business API.
-- Aplicación móvil.
-- Dashboard analítico.
-
----
-
-# ▶️ Ejecución Local
-
-## Requisitos Previos
-
-- Java 21
-- Maven 3.9+
-- MySQL 8
-- Node.js 18+
-- npm 10+
-
----
-
-## Backend
-
-```bash
-cd backend
-./mvnw spring-boot:run
-```
-
-Windows:
-
-```bash
-mvnw.cmd spring-boot:run
-```
-
-Disponible en:
-
+### Backend
 ```text
-http://localhost:8080
+victus-caf-backend/
+├── pom.xml
+└── src/main/java/com/victuscaf/
+    ├── VictusCafApplication.java
+    ├── modules/client/
+    │   ├── controller/
+    │   ├── service/
+    │   ├── repository/
+    │   ├── models/
+    │   └── dto/
+    ├── security/
+    └── exception/
+```
+
+### Frontend
+```text
+victus-caf-frontend/
+├── package.json
+├── tsconfig.json
+├── vite.config.ts
+└── src/
+    ├── App.tsx
+    ├── main.tsx
+    ├── components/
+    ├── constants/
+    ├── pages/
+    ├── services/
+    └── utils/
 ```
 
 ---
 
-## Frontend
+## Backend: estructura y cómo trabaja
 
+### Paquetes principales
+- `com.victuscaf.modules.client.controller`
+  - Controladores REST para clientes y operaciones del CAF
+- `com.victuscaf.modules.client.service`
+  - Lógica de negocio y reglas de negocio
+- `com.victuscaf.modules.client.repository`
+  - Repositorios JPA para persistencia
+- `com.victuscaf.modules.client.models`
+  - Entidades JPA: clientes, contratos, remisiones, usuarios
+- `com.victuscaf.modules.client.dto`
+  - Objetos de transferencia para peticiones y respuestas
+- `com.victuscaf.security`
+  - Seguridad JWT y configuración de Spring Security
+
+### Modelo de datos ocupado
+- `Usuario` (abstracto) → `ParticularMensual`, `ParticularDiario`, `BeneficiarioEps`
+- `UsuarioSistema` (abstracto) → `Administrador`, `Entrenador`, `Secretaria`
+- `Contrato` ↔ `ParticularMensual`
+- `Remision` ↔ `BeneficiarioEps`
+
+### Flujo de trabajo del backend
+1. El frontend hace login a `/api/auth/login`
+2. `AuthController` autentica con `AuthenticationManager`
+3. Se genera un JWT con `JwtUtils`
+4. El token se usa en las llamadas al backend
+5. `SecurityConfig` valida todas las rutas excepto `/api/auth/**`
+6. Los controladores delegan a servicios y repositorios
+
+### Endpoints clave
+- `POST /api/auth/login` → Iniciar sesión
+- `POST /api/clientes/mensual` → Registrar cliente mensual
+- `GET /api/clientes/mensual/{numeroDocumento}` → Consultar cliente mensual
+- `GET /api/clientes/mensuales/activos` → Listar clientes mensuales activos
+- `GET /api/clientes/mensuales/todos` → Listar todos los clientes mensuales
+- `POST /api/clientes/diario` → Registrar cliente diario
+- `POST /api/clientes/eps` → Registrar beneficiario EPS
+
+---
+
+## Frontend: estructura y cómo se trabaja
+
+### Carpetas principales
+- `src/pages/` → páginas de la aplicación
+- `src/components/` → componentes reutilizables
+- `src/services/` → llamadas a la API
+- `src/utils/` → utilidades generales
+
+### Componentes importantes
+- `Login.tsx` → formulario de login, guarda token y datos de usuario en `localStorage`
+- `PrivateRoute.tsx` → proteje rutas según rol
+- `GestionClientes.tsx` → lista clientes, búsqueda por documento, edición e inactivación
+- `RegistrarClienteMensual.tsx` → formulario para registrar clientes mensuales
+
+### Servicios de frontend
+- `api.ts` → instancia Axios con interceptores JWT
+- `clienteService.ts` → funciones para consumir endpoints de clientes
+- `usuarioSistemaService.ts` → funciones para CRUD de usuarios del sistema
+
+### Flujo de trabajo del frontend
+1. El usuario ingresa documento y contraseña
+2. `Login.tsx` envía datos a `/api/auth/login`
+3. Se guarda token en `localStorage`
+4. Las llamadas siguientes usan el token en `Authorization`
+5. El usuario navega según su rol
+6. Las páginas consumen datos con servicios y renderizan tablas
+
+---
+
+## Cómo ejecutar el proyecto localmente
+
+### Backend
 ```bash
-cd frontend
+cd victus-caf-backend
+../mvnw clean package
+../mvnw spring-boot:run
+```
+
+Configura `src/main/resources/application.properties` con tu conexión MariaDB/MySQL.
+
+### Frontend
+```bash
+cd victus-caf-frontend
 npm install
 npm run dev
 ```
 
-Disponible en:
-
-```text
-http://localhost:5173
-```
+Asegúrate de tener `VITE_API_URL` apuntando al backend si usas un `.env`.
 
 ---
 
-## Base de Datos
+## Notas importantes
+- El backend usa JWT y solo permite rutas públicas en `/api/auth/**`
+- El frontend asume que `localStorage` contiene `token` y `user`
+- El registro de cliente mensual crea contrato automáticamente
+- El endpoint de lista de mensuales activos devuelve solo clientes con contrato activo
 
-Crear esquema:
-
-```sql
-CREATE DATABASE victus_caf CHARACTER SET utf8mb4;
-```
-
-Configurar:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/victus_caf?useSSL=false&serverTimezone=America/Bogota
-spring.datasource.username=root
-spring.datasource.password=tu_contraseña
-
-spring.jpa.hibernate.ddl-auto=update
-spring.jpa.show-sql=true
-```
-
-Hibernate generará automáticamente las tablas al iniciar la aplicación.
+## Buenas prácticas de desarrollo
+- Añade validaciones en DTO cuando crees nuevos endpoints
+- No expongas el token en peticiones públicas
+- Usa `@JsonIgnore` o referencias de Jackson para evitar recursión infinita en entidades bidireccionales
+- Mantén los roles y permisos actualizados en `SecurityConfig`
 
 ---
 
-# 📚 Documentación
-
-- Requerimientos Funcionales
-- Historias de Usuario
-- Diagrama de Clases UML
-- Diagrama de Secuencia (Asistencia EPS)
-
----
-
-# 👥 Equipo de Desarrollo
-
-- Autor: Santiago Ruiz Gallego
-- Proyecto académico bajo metodología PSP
+## Qué se puede mejorar
+- Añadir documentación de API con Swagger
+- Manejar mejor los errores con `ApiResponse` global
+- Separar el frontend en módulos más pequeños
+- Crear tests automatizados para servicios y controladores
 
 ---
+
+## Licencia
+Este proyecto se entrega con licencia de uso **estudiantil**. Consulta `LICENSE` para los términos.

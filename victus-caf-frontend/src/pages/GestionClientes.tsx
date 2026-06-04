@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Layout from '../components/Layout';
 import toast from 'react-hot-toast';
-import { FiEdit2, FiSearch, FiTrash2, FiUserPlus } from 'react-icons/fi';
+import { FiEdit2, FiSearch, FiTrash2, FiUserPlus, FiRefreshCw } from 'react-icons/fi';
 import {
   type ClienteBase,
   type ActualizarClienteDTO,
@@ -18,6 +18,9 @@ import {
   desactivarClienteMensual,
   desactivarClienteDiario,
   desactivarBeneficiarioEps,
+  reactivarClienteMensual,
+  reactivarClienteDiario,
+  reactivarBeneficiarioEps,
   buscarClienteMensual,
   buscarClienteDiario,
   buscarBeneficiarioEps,
@@ -66,8 +69,8 @@ export default function GestionClientes() {
 
   const filtrados = useMemo(() => {
     const q = busqueda.trim().toLowerCase();
-    if (!q) return clientes;
-    return clientes.filter(
+    if (!q) return clientes || [];
+    return (clientes || []).filter(
       (c) =>
         c.nombreCompleto.toLowerCase().includes(q) ||
         String(c.numeroDeDocumento).includes(q) ||
@@ -138,6 +141,19 @@ export default function GestionClientes() {
     }
   };
 
+  const reactivar = async (c: ClienteBase) => {
+    if (!window.confirm(`¿Reactivar a ${c.nombreCompleto}?`)) return;
+    try {
+      if (tab === 'mensual') await reactivarClienteMensual(c.numeroDeDocumento);
+      else if (tab === 'diario') await reactivarClienteDiario(c.numeroDeDocumento);
+      else await reactivarBeneficiarioEps(c.numeroDeDocumento);
+      toast.success('Cliente reactivado');
+      cargar();
+    } catch (err) {
+      toast.error(getApiErrorMessage(err, 'Error al reactivar'));
+    }
+  };
+
   const estadoLabel = (c: ClienteBase) => {
     if (tab === 'mensual') return c.estadoMembresia ?? (c.estado ? 'ACTIVO' : 'INACTIVO');
     if (tab === 'eps') return c.estadoContrato ?? '-';
@@ -158,12 +174,10 @@ export default function GestionClientes() {
             {t === 'mensual' ? 'Particular Mensual' : t === 'diario' ? 'Particular Diario' : 'Beneficiario EPS'}
           </button>
         ))}
-        {esAdmin && (
-          <label className="ml-auto flex items-center gap-2 text-sm text-gray-600">
-            <input type="checkbox" checked={verTodos} onChange={(e) => setVerTodos(e.target.checked)} />
-            Ver inactivos / todos
-          </label>
-        )}
+        <label className="ml-auto flex items-center gap-2 text-sm text-gray-600">
+          <input type="checkbox" checked={verTodos} onChange={(e) => setVerTodos(e.target.checked)} />
+          Ver inactivos / todos
+        </label>
         <Link
           to={rutaRegistro()}
           className="flex items-center gap-2 px-4 py-2 bg-green-600 text-white rounded-md text-sm hover:bg-green-700"
@@ -230,7 +244,17 @@ export default function GestionClientes() {
                       >
                         <FiEdit2 size={18} />
                       </button>
-                      {esAdmin && (
+                      {!c.estado && (
+                        <button
+                          type="button"
+                          onClick={() => reactivar(c)}
+                          className="text-green-600 hover:text-green-800"
+                          title="Reactivar"
+                        >
+                          <FiRefreshCw size={18} />
+                        </button>
+                      )}
+                      {esAdmin && c.estado && (
                         <button
                           type="button"
                           onClick={() => inactivar(c)}

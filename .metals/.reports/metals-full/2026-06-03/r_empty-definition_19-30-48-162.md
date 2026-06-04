@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/security/SecurityConfig.java:_empty_/HttpMethod#OPTIONS#
+file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/security/SecurityConfig.java
+empty definition using pc, found symbol in pc: _empty_/HttpMethod#OPTIONS#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 3079
+uri: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/security/SecurityConfig.java
+text:
+```scala
 package com.victuscaf.security;
 
 import lombok.RequiredArgsConstructor;
@@ -64,7 +75,7 @@ public class SecurityConfig {
             .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             // Reglas de autorización
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.@@OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
@@ -91,3 +102,10 @@ public class SecurityConfig {
         }};
     }
 }
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/HttpMethod#OPTIONS#

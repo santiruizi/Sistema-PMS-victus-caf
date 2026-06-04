@@ -1,3 +1,14 @@
+error id: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/controller/UsuarioSistemaController.java:_empty_/PatchMapping#
+file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/controller/UsuarioSistemaController.java
+empty definition using pc, found symbol in pc: _empty_/PatchMapping#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 2051
+uri: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/controller/UsuarioSistemaController.java
+text:
+```scala
 package com.victuscaf.modules.client.controller;
 
 import com.victuscaf.modules.client.dto.ApiResponse;
@@ -46,8 +57,15 @@ public class UsuarioSistemaController {
         return ResponseEntity.ok(ApiResponse.success("Usuario desactivado", null));
     }
 
-    @PatchMapping("/{id}/reactivar")
+    @@@PatchMapping("/{id}/reactivar")
     public ResponseEntity<ApiResponse<UsuarioSistema>> reactivar(@PathVariable Long id) {
         return ResponseEntity.ok(ApiResponse.success("Usuario reactivado", usuarioSistemaService.reactivar(id)));
     }
 }
+
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: _empty_/PatchMapping#

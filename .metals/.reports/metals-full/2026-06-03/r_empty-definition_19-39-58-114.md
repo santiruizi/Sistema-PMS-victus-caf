@@ -1,8 +1,19 @@
+error id: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/controller/ClienteController.java:com/victuscaf/modules/client/service/ClienteService#
+file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/controller/ClienteController.java
+empty definition using pc, found symbol in pc: com/victuscaf/modules/client/service/ClienteService#
+empty definition using semanticdb
+empty definition using fallback
+non-local guesses:
+
+offset: 183
+uri: file://<WORKSPACE>/victus-caf-backend/src/main/java/com/victuscaf/modules/client/controller/ClienteController.java
+text:
+```scala
 package com.victuscaf.modules.client.controller;
 
 import com.victuscaf.modules.client.dto.*;
 import com.victuscaf.modules.client.models.*;
-import com.victuscaf.modules.client.service.ClienteService;
+import com.victuscaf.modules.client.service.@@ClienteService;
 import com.victuscaf.modules.client.dto.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -204,3 +215,9 @@ public class ClienteController {
                 clienteService.consultarContratosVencidos()));
     }
 }
+```
+
+
+#### Short summary: 
+
+empty definition using pc, found symbol in pc: com/victuscaf/modules/client/service/ClienteService#

@@ -132,3 +132,12 @@ export const desactivarClienteDiario = (numeroDocumento: number) =>
 
 export const desactivarBeneficiarioEps = (numeroDocumento: number) =>
   api.delete<ApiResponse<void>>(`/clientes/eps/${numeroDocumento}`);
+
+export const reactivarClienteMensual = (numeroDocumento: number) =>
+  api.put<ApiResponse<ClienteBase>>(`/clientes/mensual/${numeroDocumento}/reactivar`).then(unwrap);
+
+export const reactivarClienteDiario = (numeroDocumento: number) =>
+  api.put<ApiResponse<ClienteBase>>(`/clientes/diario/${numeroDocumento}/reactivar`).then(unwrap);
+
+export const reactivarBeneficiarioEps = (numeroDocumento: number) =>
+  api.put<ApiResponse<ClienteBase>>(`/clientes/eps/${numeroDocumento}/reactivar`).then(unwrap);

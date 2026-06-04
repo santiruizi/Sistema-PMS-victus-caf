@@ -1,5 +1,6 @@
 package com.victuscaf.modules.client.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.*;
 import java.time.LocalDate;
@@ -23,6 +24,7 @@ public class Contrato {
     @Enumerated(EnumType.STRING)
     private EstadoContratoParticular estado;
 
+    @JsonBackReference
     @OneToOne
     @JoinColumn(name = "cliente_id")
     private ParticularMensual cliente;
